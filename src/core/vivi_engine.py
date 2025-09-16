@@ -41,14 +41,27 @@ class ViviEngine(QObject):
         """Start the Vivi engine"""
         if self.running:
             return
-
+            
         self.running = True
-
+        
         # Start input monitoring
+        print("Starting input monitoring...")
         self.input_monitor.start_monitoring()
-
+        print("Input monitoring started")
+        
+        print("Starting main loop thread...")
         self.thread = threading.Thread(target=self._main_loop, daemon=True)
         self.thread.start()
+        print("Main loop thread started")
+        
+        # Send a welcome message
+        welcome_feedback = {
+            'type': 'welcome',
+            'message': 'Welcome to Vivi! I\'m now monitoring your activity.',
+            'priority': 'low',
+            'timestamp': time.time()
+        }
+        self._deliver_feedback(welcome_feedback)
 
     def stop(self):
         """Stop the Vivi engine"""
@@ -68,15 +81,17 @@ class ViviEngine(QObject):
             try:
                 loop_count += 1
                 print(f"Main loop iteration {loop_count}")
-                
+
                 # Collect data from all monitors
                 data = self._collect_data()
                 print(f"Data collected: {list(data.keys())}")
-                
+
                 # Analyze behavior
                 analysis = self.analyzer.analyze(data)
-                print(f"Analysis completed, needs_feedback: {analysis.get('needs_feedback')}")
-                
+                print(
+                    f"Analysis completed, needs_feedback: {analysis.get('needs_feedback')}"
+                )
+
                 # Generate feedback if needed
                 if analysis.get("needs_feedback"):
                     print("Generating feedback...")
@@ -84,12 +99,13 @@ class ViviEngine(QObject):
                     self._deliver_feedback(feedback)
                 else:
                     print("No feedback needed")
-                    
+
                 time.sleep(1)  # Process every second
-                
+
             except Exception as e:
                 print(f"Error in main loop: {e}")
                 import traceback
+
                 traceback.print_exc()
                 time.sleep(5)  # Wait before retrying
 
