@@ -2,6 +2,7 @@
 Main GUI window for Vivi
 """
 
+import time
 from PyQt6.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout, 
                              QWidget, QLabel, QPushButton, QTextEdit, 
                              QListWidget, QSplitter, QStatusBar)
@@ -16,6 +17,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.engine = engine
         self.init_ui()
+        
+        # Connect engine signals
+        self.engine.feedback_generated.connect(self.display_feedback)
         
     def init_ui(self):
         """Initialize the user interface"""
@@ -159,4 +163,24 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Error updating display: {e}")
             # Don't crash the GUI, just log the error
+            
+    def display_feedback(self, feedback: dict):
+        """Display AI feedback in the feedback section"""
+        try:
+            message = feedback.get('message', 'No message')
+            feedback_type = feedback.get('type', 'unknown')
+            priority = feedback.get('priority', 'low')
+            
+            # Format the feedback message
+            timestamp = time.strftime("%H:%M:%S")
+            formatted_message = f"[{timestamp}] {message}\n"
+            formatted_message += f"Type: {feedback_type} | Priority: {priority}\n"
+            formatted_message += "-" * 50 + "\n"
+            
+            # Append to feedback display
+            current_text = self.feedback_display.toPlainText()
+            self.feedback_display.setPlainText(formatted_message + current_text)
+            
+        except Exception as e:
+            print(f"Error displaying feedback: {e}")
 

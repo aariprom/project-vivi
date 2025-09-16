@@ -5,6 +5,7 @@ Vivi Engine - Core AI assistant logic
 import threading
 import time
 from typing import Optional, Dict, Any
+from PyQt6.QtCore import QObject, pyqtSignal
 from .monitors.screen_monitor import ScreenMonitor
 from .monitors.process_monitor import ProcessMonitor
 from .monitors.input_monitor import InputMonitor
@@ -12,10 +13,14 @@ from .ai.analyzer import BehaviorAnalyzer
 from .ai.feedback_engine import FeedbackEngine
 
 
-class ViviEngine:
+class ViviEngine(QObject):
     """Main Vivi AI assistant engine"""
-
+    
+    # Signal emitted when feedback is generated
+    feedback_generated = pyqtSignal(dict)
+    
     def __init__(self):
+        super().__init__()
         self.running = False
         self.thread = None
 
@@ -89,7 +94,8 @@ class ViviEngine:
     def _deliver_feedback(self, feedback: Dict[str, Any]):
         """Deliver feedback to user"""
         print(f"Vivi Feedback: {feedback}")
-        # TODO: Implement actual feedback delivery (notifications, etc.)
+        # Emit signal to GUI
+        self.feedback_generated.emit(feedback)
 
     def add_task(self, task: str):
         """Add a task to user's work list"""
