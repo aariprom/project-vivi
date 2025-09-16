@@ -58,4 +58,4 @@ echo.
 echo To build Windows executable:
 echo   python build.py
 echo.
-pause
+pause
