@@ -140,18 +140,23 @@ class MainWindow(QMainWindow):
             
     def update_display(self):
         """Update the display with current information"""
-        # Update task list
-        current_tasks = self.engine.get_tasks()
-        self.task_list.clear()
-        for task in current_tasks:
-            self.task_list.addItem(task)
+        try:
+            # Update task list
+            current_tasks = self.engine.get_tasks()
+            self.task_list.clear()
+            for task in current_tasks:
+                self.task_list.addItem(task)
+                
+            # Update status display
+            status_text = f"Engine Running: {self.engine.running}\n"
+            status_text += f"Active Tasks: {len(current_tasks)}\n"
+            status_text += f"Screen Monitor: Active\n"
+            status_text += f"Process Monitor: Active\n"
+            status_text += f"Input Monitor: Active"
             
-        # Update status display
-        status_text = f"Engine Running: {self.engine.running}\n"
-        status_text += f"Active Tasks: {len(current_tasks)}\n"
-        status_text += f"Screen Monitor: Active\n"
-        status_text += f"Process Monitor: Active\n"
-        status_text += f"Input Monitor: Active"
-        
-        self.status_display.setPlainText(status_text)
+            self.status_display.setPlainText(status_text)
+            
+        except Exception as e:
+            print(f"Error updating display: {e}")
+            # Don't crash the GUI, just log the error
 
