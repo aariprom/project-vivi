@@ -1,0 +1,24 @@
+# Core dependencies
+pyqt6>=6.6.0
+pillow>=10.0.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+
+# Windows API and system monitoring (only install on Windows)
+pywin32>=306; sys_platform == "win32"
+psutil>=5.9.0
+pynput>=1.7.6
+
+# Alternative for cross-platform development
+mss>=9.0.0  # Cross-platform screenshot library
+keyboard>=0.13.5  # Alternative keyboard monitoring
+
+# AI/ML libraries (optional for basic functionality)
+torch>=2.0.0; python_version >= "3.8" and python_version < "3.12"
+transformers>=4.30.0; python_version >= "3.8" and python_version < "3.12"
+openai>=1.0.0
+
+# Utilities
+pyinstaller>=5.13.0
+python-dotenv>=1.0.0
+
