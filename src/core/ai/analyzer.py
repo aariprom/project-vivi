@@ -159,17 +159,29 @@ class BehaviorAnalyzer:
         
     def _should_provide_feedback(self, analysis: Dict[str, Any]) -> bool:
         """Determine if feedback should be provided"""
+        # Debug: Print analysis results
+        print(f"Analysis results: {analysis}")
+        
         # Provide feedback for low focus score
         if analysis.get('focus_score', 0.5) < 0.3:
+            print("Triggering feedback: Low focus score")
             return True
             
         # Provide feedback for distraction detection
         if analysis.get('distraction_detected'):
+            print("Triggering feedback: Distraction detected")
             return True
             
         # Provide feedback for extended inactivity
         if analysis.get('screen_static') and not analysis.get('input_active'):
+            print("Triggering feedback: Extended inactivity")
             return True
             
+        # Provide feedback for high activity (testing)
+        if analysis.get('input_active') and analysis.get('typing_rate', 0) > 0:
+            print("Triggering feedback: High activity detected")
+            return True
+            
+        print("No feedback triggered")
         return False
 

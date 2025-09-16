@@ -15,10 +15,10 @@ from .ai.feedback_engine import FeedbackEngine
 
 class ViviEngine(QObject):
     """Main Vivi AI assistant engine"""
-    
+
     # Signal emitted when feedback is generated
     feedback_generated = pyqtSignal(dict)
-    
+
     def __init__(self):
         super().__init__()
         self.running = False
@@ -62,23 +62,35 @@ class ViviEngine(QObject):
 
     def _main_loop(self):
         """Main processing loop"""
+        print("Main loop started")
+        loop_count = 0
         while self.running:
             try:
+                loop_count += 1
+                print(f"Main loop iteration {loop_count}")
+                
                 # Collect data from all monitors
                 data = self._collect_data()
-
+                print(f"Data collected: {list(data.keys())}")
+                
                 # Analyze behavior
                 analysis = self.analyzer.analyze(data)
-
+                print(f"Analysis completed, needs_feedback: {analysis.get('needs_feedback')}")
+                
                 # Generate feedback if needed
                 if analysis.get("needs_feedback"):
+                    print("Generating feedback...")
                     feedback = self.feedback_engine.generate_feedback(analysis)
                     self._deliver_feedback(feedback)
-
+                else:
+                    print("No feedback needed")
+                    
                 time.sleep(1)  # Process every second
-
+                
             except Exception as e:
                 print(f"Error in main loop: {e}")
+                import traceback
+                traceback.print_exc()
                 time.sleep(5)  # Wait before retrying
 
     def _collect_data(self) -> Dict[str, Any]:
