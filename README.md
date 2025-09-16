@@ -13,6 +13,12 @@ Vivi is an intelligent AI assistant that monitors your screen, tracks your input
 
 ## Installation
 
+### Windows Users (Recommended)
+1. Clone the repository
+2. **Double-click `setup_vivi.bat`** - This will handle everything automatically!
+3. **Double-click `run_vivi.bat`** to launch Vivi
+
+### Manual Installation
 1. Clone the repository:
 ```bash
 git clone <repository-url>
