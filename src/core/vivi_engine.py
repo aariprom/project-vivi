@@ -38,12 +38,20 @@ class ViviEngine:
             return
             
         self.running = True
+        
+        # Start input monitoring
+        self.input_monitor.start_monitoring()
+        
         self.thread = threading.Thread(target=self._main_loop, daemon=True)
         self.thread.start()
         
     def stop(self):
         """Stop the Vivi engine"""
         self.running = False
+        
+        # Stop input monitoring
+        self.input_monitor.stop_monitoring()
+        
         if self.thread:
             self.thread.join()
             
