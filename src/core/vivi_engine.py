@@ -41,25 +41,25 @@ class ViviEngine(QObject):
         """Start the Vivi engine"""
         if self.running:
             return
-            
+
         self.running = True
-        
+
         # Start input monitoring
         print("Starting input monitoring...")
         self.input_monitor.start_monitoring()
         print("Input monitoring started")
-        
+
         print("Starting main loop thread...")
         self.thread = threading.Thread(target=self._main_loop, daemon=True)
         self.thread.start()
         print("Main loop thread started")
-        
+
         # Send a welcome message
         welcome_feedback = {
-            'type': 'welcome',
-            'message': 'Welcome to Vivi! I\'m now monitoring your activity.',
-            'priority': 'low',
-            'timestamp': time.time()
+            "type": "welcome",
+            "message": "Welcome to Vivi! I'm now monitoring your activity.",
+            "priority": "low",
+            "timestamp": time.time(),
         }
         self._deliver_feedback(welcome_feedback)
 
