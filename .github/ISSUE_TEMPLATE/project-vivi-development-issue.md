@@ -7,8 +7,6 @@ assignees: ''
 
 ---
 
-**Title:** 
-
 **Description:**
 - 
 
@@ -16,4 +14,3 @@ assignees: ''
 - [ ] 
 
 **Additional Notes:**
--
