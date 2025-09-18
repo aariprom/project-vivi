@@ -29,6 +29,9 @@ class MainWindow(QMainWindow):
 
         # Connect engine signals
         self.engine.feedback_generated.connect(self.display_feedback)
+        
+        # State management
+        self.is_operation_in_progress = False
 
     def init_ui(self):
         """Initialize the user interface"""
@@ -101,6 +104,9 @@ class MainWindow(QMainWindow):
         self.start_button = QPushButton("Start Monitoring")
         self.start_button.clicked.connect(self.toggle_monitoring)
         layout.addWidget(self.start_button)
+        
+        # Update button state based on engine status
+        self.update_button_state()
 
         return panel
 
@@ -142,14 +148,63 @@ class MainWindow(QMainWindow):
 
     def toggle_monitoring(self):
         """Toggle monitoring on/off"""
-        if self.engine.running:
-            self.engine.stop()
-            self.start_button.setText("Start Monitoring")
-            self.status_bar.showMessage("Vivi stopped")
-        else:
+        # Prevent multiple simultaneous operations
+        if self.is_operation_in_progress:
+            print("Operation already in progress, ignoring click")
+            return
+            
+        self.is_operation_in_progress = True
+        self.start_button.setEnabled(False)
+        
+        try:
+            if self.engine.running:
+                self._stop_engine()
+            else:
+                self._start_engine()
+        except Exception as e:
+            print(f"Error in toggle_monitoring: {e}")
+            self.status_bar.showMessage(f"Error: {e}")
+        finally:
+            # Re-enable button after operation completes
+            self.start_button.setEnabled(True)
+            self.is_operation_in_progress = False
+            
+    def _start_engine(self):
+        """Start the engine safely"""
+        print("Starting Vivi engine...")
+        self.status_bar.showMessage("Starting Vivi...")
+        
+        try:
             self.engine.start()
-            self.start_button.setText("Stop Monitoring")
+            self.update_button_state()
             self.status_bar.showMessage("Vivi is running...")
+            print("Vivi engine started successfully")
+        except Exception as e:
+            print(f"Error starting engine: {e}")
+            self.status_bar.showMessage(f"Failed to start: {e}")
+            raise
+            
+    def _stop_engine(self):
+        """Stop the engine safely"""
+        print("Stopping Vivi engine...")
+        self.status_bar.showMessage("Stopping Vivi...")
+        
+        try:
+            self.engine.stop()
+            self.update_button_state()
+            self.status_bar.showMessage("Vivi stopped")
+            print("Vivi engine stopped successfully")
+        except Exception as e:
+            print(f"Error stopping engine: {e}")
+            self.status_bar.showMessage(f"Failed to stop: {e}")
+            raise
+            
+    def update_button_state(self):
+        """Update button text and state based on engine status"""
+        if self.engine.running:
+            self.start_button.setText("Stop Monitoring")
+        else:
+            self.start_button.setText("Start Monitoring")
 
     def update_display(self):
         """Update the display with current information"""

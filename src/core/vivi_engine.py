@@ -65,13 +65,27 @@ class ViviEngine(QObject):
 
     def stop(self):
         """Stop the Vivi engine"""
+        if not self.running:
+            print("Engine is already stopped")
+            return
+            
+        print("Stopping Vivi engine...")
         self.running = False
 
         # Stop input monitoring
-        self.input_monitor.stop_monitoring()
+        try:
+            self.input_monitor.stop_monitoring()
+            print("Input monitoring stopped")
+        except Exception as e:
+            print(f"Error stopping input monitoring: {e}")
 
+        # Don't join thread in GUI thread - let it finish naturally
         if self.thread:
-            self.thread.join()
+            print("Main loop thread will stop naturally")
+            # Reset thread reference
+            self.thread = None
+            
+        print("Vivi engine stopped")
 
     def _main_loop(self):
         """Main processing loop"""
