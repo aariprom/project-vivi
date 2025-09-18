@@ -23,6 +23,7 @@ class ViviEngine(QObject):
         super().__init__()
         self.running = False
         self.thread = None
+        self.is_first_start = True  # Track if this is the first start
 
         # Initialize monitors
         self.screen_monitor = ScreenMonitor()
@@ -54,21 +55,23 @@ class ViviEngine(QObject):
         self.thread.start()
         print("Main loop thread started")
 
-        # Send a welcome message
-        welcome_feedback = {
-            "type": "welcome",
-            "message": "Welcome to Vivi! I'm now monitoring your activity.",
-            "priority": "low",
-            "timestamp": time.time(),
-        }
-        self._deliver_feedback(welcome_feedback)
+        # Send a welcome message only on first start
+        if self.is_first_start:
+            welcome_feedback = {
+                "type": "welcome",
+                "message": "Welcome to Vivi! I'm now monitoring your activity.",
+                "priority": "low",
+                "timestamp": time.time(),
+            }
+            self._deliver_feedback(welcome_feedback)
+            self.is_first_start = False
 
     def stop(self):
         """Stop the Vivi engine"""
         if not self.running:
             print("Engine is already stopped")
             return
-            
+
         print("Stopping Vivi engine...")
         self.running = False
 
@@ -84,7 +87,7 @@ class ViviEngine(QObject):
             print("Main loop thread will stop naturally")
             # Reset thread reference
             self.thread = None
-            
+
         print("Vivi engine stopped")
 
     def _main_loop(self):
